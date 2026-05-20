@@ -18,7 +18,8 @@ IS
     v_status cp3_pedido.status%TYPE;
     v_etapa  VARCHAR2(100);
     
-    CURSOR c_itens is select produto_id, quantidade from cp3_pedido_item where pedido_id = p_pedido_id;
+    cursor c_itens(p_id cp3_pedido.pedido_id%TYPE) is 
+        select produto_id, quantidade from cp3_pedido_item where pedido_id = p_id;
 
     v_valor_total cp3_pedido.valor_total%TYPE;
     v_valor_frete cp3_pedido.valor_frete%TYPE;
@@ -38,7 +39,7 @@ BEGIN
     
     -- Percorrer os itens e movimentar o estoque
     v_etapa := 'Baixa no estoque dos itens';
-    for r_item in c_itens loop
+    for r_item in c_itens(p_pedido_id) loop
         cp3_pr_movimentar_estoque(
             p_produto_id => r_item.produto_id,
             p_tipo => 'S',
