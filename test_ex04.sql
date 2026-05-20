@@ -1,10 +1,14 @@
--- =============================================================
--- Arquivo  : test_ex04.sql
--- Testa    : cp3_pr_detalhar_pedidos_periodo (Exercício 4)
--- Autor(es): Grupo __________________________
--- RMs: _56348________________________________
--- Data: _17_/_05_/2026
--- =============================================================
+/*
+========================================================
+TESTE DO EXERCÍCIO 4 — Procedure: detalhamento dos itens de cada pedido
+
+Autor(es): Gustavo Okada
+RM: 563428
+Data: 17/05/2026
+
+Descrição: Cenários de testes (sucesso e erro) para a procedure de detalhamento de itens de pedidos por período.
+========================================================
+*/
 
 SET SERVEROUTPUT ON SIZE UNLIMITED;
 

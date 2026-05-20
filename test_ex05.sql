@@ -1,3 +1,15 @@
+/*
+========================================================
+TESTE DO EXERCÍCIO 5 — Function: total de um pedido
+
+Autor(es): Luna de Carvalho Guimarães
+RM: 562290
+Data: 18/05/2026
+
+Descrição: Cenários de testes (sucesso e erro) para a função que calcula o valor total de um pedido.
+========================================================
+*/
+
 SET SERVEROUTPUT ON;
 
 DECLARE

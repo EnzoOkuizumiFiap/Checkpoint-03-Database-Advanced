@@ -2,9 +2,9 @@
 ========================================================
 EXERCÍCIO 2 — Procedure: relatório de produtos por categoria
 
-Autor(es): Grupo __________________________
-RMs: ______________________________________
-Data: ____/____/2026
+Autor(es): Lucas Barros
+RM: 566422
+Data: 17/05/2026
 
 Descrição:
 Lista os produtos ativos de uma categoria, exibindo:
@@ -51,7 +51,6 @@ BEGIN
             ' | Estoque: ' || produto.quantidade
         );
         total := total + 1;
-        
     END LOOP;
 
     DBMS_OUTPUT.PUT_LINE('Total de produtos listados: ' || total);
@@ -59,8 +58,10 @@ BEGIN
 EXCEPTION
     WHEN categoria_nao_encontrada THEN
         DBMS_OUTPUT.PUT_LINE(SQLERRM);
+        RAISE;
 
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Erro: ' || SQLERRM);
-END;
+        RAISE;
+END cp3_pr_listar_produtos_categoria;
 /

@@ -1,10 +1,28 @@
+/*
+========================================================
+EXERCÍCIO 6 — Function: cálculo do frete
+
+Autor(es): Luna de Carvalho Guimarães
+RM: 562290
+Data: 18/05/2026
+
+Descrição:
+Calcula o valor do frete do pedido com base no peso total
+dos itens e na UF de entrega. Se o pedido não existir ou
+não tiver endereço associado, lança exceções específicas.
+
+Parâmetros:
+- p_pedido_id: ID do pedido para o qual se deseja calcular o frete
+========================================================
+*/
+
 CREATE OR REPLACE FUNCTION cp3_fn_calcular_frete (
     p_pedido_id IN NUMBER
 ) RETURN NUMBER IS
     v_pedido       NUMBER;
-    v_uf           CHAR(2);
-    v_peso_total   NUMBER;
-    v_frete        NUMBER;
+    v_uf           cp3_cep.uf%TYPE;
+    v_peso_total   cp3_produto.peso_kg%TYPE;
+    v_frete        cp3_pedido.valor_frete%TYPE;
 BEGIN
 
     SELECT
@@ -21,15 +39,20 @@ BEGIN
                                         || ' não existe para calcular o frete!');
     END IF;
 
-    SELECT
-        cp.uf
-    INTO v_uf
-    FROM
-        cp3_pedido     ped
-        JOIN cp3_endereco   ende ON ped.endereco_entrega_id = ende.endereco_id
-        JOIN cp3_cep        cp ON ende.cep = cp.cep
-    WHERE
-        ped.pedido_id = p_pedido_id;
+    BEGIN
+        SELECT
+            cp.uf
+        INTO v_uf
+        FROM
+            cp3_pedido     ped
+            INNER JOIN cp3_endereco   ende ON ped.endereco_entrega_id = ende.endereco_id
+            INNER JOIN cp3_cep        cp ON ende.cep = cp.cep
+        WHERE
+            ped.pedido_id = p_pedido_id;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20003, 'Erro: Endereço de entrega ou CEP não localizado para o pedido ' || p_pedido_id || '.');
+    END;
 
     SELECT
         SUM(i.quantidade * prod.peso_kg)

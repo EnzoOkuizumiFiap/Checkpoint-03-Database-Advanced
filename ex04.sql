@@ -1,10 +1,21 @@
--- =============================================================
--- Arquivo  : ex04.sql
--- Exercício: 4 — Procedure: detalhamento dos itens de cada pedido
--- Autor(es): Grupo __________________________
--- RMs: _56348________________________________
--- Data: _17_/_05_/2026
--- =============================================================
+/*
+========================================================
+EXERCÍCIO 4 — Procedure: detalhamento dos itens de cada pedido
+
+Autor(es): Gustavo Okada
+RM: 563428
+Data: 17/05/2026
+
+Descrição:
+Gera um relatório detalhado dos pedidos realizados em um intervalo
+de datas, listando seus itens, subtotais (tratando descontos nulos)
+e totais calculados através de cursores aninhados.
+
+Parâmetros:
+- p_data_ini (IN DATE): Data inicial do período
+- p_data_fim (IN DATE): Data final do período
+========================================================
+*/
 
 CREATE OR REPLACE PROCEDURE cp3_pr_detalhar_pedidos_periodo (
     p_data_ini IN DATE,

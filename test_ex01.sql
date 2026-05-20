@@ -1,9 +1,10 @@
 /*
 ========================================================
 TESTE DO EXERCÍCIO 1 — Verificação de estoque
-Autor(es): Grupo __________________________
-RMs: ______________________________________
-Data: ____/____/2026
+
+Autor(es): Lucas Barros
+RM: 566422
+Data: 17/05/2026
 
 Descrição:
 Dois testes do bloco anônimo:

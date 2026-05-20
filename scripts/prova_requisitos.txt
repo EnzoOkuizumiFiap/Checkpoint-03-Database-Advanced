@@ -1,0 +1,98 @@
+REGRAS GERAIS E RESTRIÇÕES TÉCNICAS (ShopFast PL/SQL)
+- Prefixo obrigatório nos objetos: cp3_ (ex: cp3_fn_total_pedido, cp3_pr_finalizar_pedido).
+- PROIBIDO usar SYS_REFCURSOR. Use cursores explícitos declarados formalmente (CURSOR ... IS SELECT ...) com OPEN/FETCH/CLOSE ou cursor FOR LOOP.
+- PROIBIDO usar views do dicionário do sistema (USER_*, ALL_*, DBA_*).
+- Variáveis: declarar explicitamente, de preferência usando %TYPE ou %ROWTYPE.
+- Tratamento de exceções: criar exceções nomeadas com PRAGMA EXCEPTION_INIT ou usar RAISE_APPLICATION_ERROR (intervalo −20000 a −20999). Mensagens em português e claras.
+- Cabeçalhos: cada procedure ou function deve ter um cabeçalho em comentário com nome, autor, data, parâmetros e descrição.
+- Sem hard-code de valores (use parâmetros ou variáveis).
+- Apenas Exercício 1 é bloco anônimo. Todos os outros são stored procedures ou functions.
+- Testes e blocos anônimos devem usar DBMS_OUTPUT.PUT_LINE para exibir resultados.
+
+PENALIDADES TÉCNICAS
+- Uso de SYS_REFCURSOR: -15 pontos
+- Uso de tabelas do dicionário (USER_* etc): -10 pontos
+- Objeto sem prefixo cp3_: -3 pontos por ocorrência
+- Hard-code de IDs/valores: -2 pontos por ocorrência
+- Uso de exceções genéricas (WHEN OTHERS) sem tratar/relançar (RAISE): -5 pontos
+- Procedure/function sem cabeçalho: -1 ponto por ocorrência
+- Bloco anônimo fora do Exercício 1: -5 pontos por ocorrência
+- Alterar schema original: -5 pontos
+- Código que não compila no Oracle: Nota zero no exercício
+
+EXERCÍCIOS
+
+Exercício 1 — Verificação rápida de estoque (Bloco Anônimo)
+- Receber ID do produto por variável de substituição (&produto_id).
+- Exibir em uma linha: nome do produto, nome da categoria, quantidade em estoque, quantidade mínima cadastrada e mensagem "ALERTA: REPOR ESTOQUE" (se estoque atual < mínimo) ou "ESTOQUE OK" (caso contrário).
+- Se o produto não existir, tratar a exceção (ex: NO_DATA_FOUND) exibindo mensagem de erro clara (sem exceção não tratada).
+
+Exercício 2 — Procedure: relatório de produtos por categoria
+- Assinatura: cp3_pr_listar_produtos_categoria(p_categoria_id IN NUMBER)
+- Exibir para cada produto ATIVO ('S') da categoria: nome do produto, preço unitário, quantidade em estoque. Iterar usando cursor explícito em loop.
+- Ao final, mostrar total de produtos listados.
+- Se a categoria não existir, lançar exceção customizada.
+
+Exercício 3 — Procedure: pedidos de um período
+- Assinatura: cp3_pr_listar_pedidos_periodo(p_data_ini IN DATE, p_data_fim IN DATE)
+- Relatório de pedidos realizados no período: exibir número do pedido, data_pedido, nome do cliente e status.
+- Obrigatoriamente usar cursor explícito com controle manual (OPEN, FETCH, CLOSE). Não usar cursor FOR LOOP automático.
+- Validar se p_data_fim >= p_data_ini; se inválido, lançar exceção.
+
+Exercício 4 — Procedure: detalhamento dos itens de cada pedido
+- Assinatura: cp3_pr_detalhar_pedidos_periodo(p_data_ini IN DATE, p_data_fim IN DATE)
+- Estender Exercício 3: para cada pedido no período, exibir dados do pedido e aninhar um cursor de itens para exibir nome do produto, quantidade, preço_unitario, desconto e subtotal do item (quantidade * preco_unitario - NVL(desconto, 0)).
+- Validar se p_data_fim >= p_data_ini; se inválido, lançar exceção.
+
+Exercício 5 — Function: total de um pedido
+- Assinatura: cp3_fn_total_pedido(p_pedido_id IN NUMBER) RETURN NUMBER
+- Retorna o valor total do pedido somando todos os seus itens (quantidade * preco_unitario - NVL(desconto, 0)).
+- Se o pedido não existir, lançar exceção customizada com mensagem clara.
+
+Exercício 6 — Function: cálculo do frete
+- Assinatura: cp3_fn_calcular_frete(p_pedido_id IN NUMBER) RETURN NUMBER
+- Retorna o frete com base na UF de entrega do pedido e no peso total dos itens (quantidade * NVL(peso_kg, 0)).
+- Fórmulas de frete:
+  - SP ou RJ: R$ 15,00 + R$ 2,00 * peso total (kg)
+  - MG ou ES: R$ 20,00 + R$ 3,00 * peso total (kg)
+  - Outras UFs: R$ 30,00 + R$ 5,00 * peso total (kg)
+- Se o pedido não existir, ou se a UF/Endereço não for encontrado, lançar exceção customizada.
+
+Exercício 7 — Procedure: movimentação de estoque
+- Assinatura: cp3_pr_movimentar_estoque(p_produto_id IN NUMBER, p_tipo IN CHAR, p_qtd IN NUMBER, p_observacao IN VARCHAR2)
+- Atualiza quantidade na tabela cp3_estoque (tipo 'E' adiciona; tipo 'S' subtrai).
+- Insere registro na tabela de histórico (cp3_movimento_estoque) com a data atual.
+- Lançar exceção customizada se: produto não existe, quantidade <= 0, tipo diferente de 'E' ou 'S', ou se a saída deixar estoque negativo.
+- Executar COMMIT somente no final.
+
+Exercício 8 — Procedure: finalizar um pedido
+- Assinatura: cp3_pr_finalizar_pedido(p_pedido_id IN NUMBER)
+- Executa os seguintes passos em uma transação única (COMMIT no final ou ROLLBACK em caso de falha):
+  1. Valida que o pedido existe e tem status 'PENDENTE' (senão lança exceção).
+  2. Percorre itens do pedido com cursor explícito e chama cp3_pr_movimentar_estoque com tipo 'S'.
+  3. Atualiza valor_total chamando cp3_fn_total_pedido.
+  4. Atualiza valor_frete chamando cp3_fn_calcular_frete.
+  5. Atualiza status do pedido para 'FINALIZADO' e executa COMMIT.
+- Em caso de falha, executa ROLLBACK e relança a exceção com mensagem identificando a etapa do erro.
+
+Exercício 9 — Procedure: classificação de clientes
+- Assinatura: cp3_pr_classificar_clientes
+- Para cada cliente ativo:
+  - Calcula total gasto somando cp3_fn_total_pedido de seus pedidos finalizados.
+  - Classificação por total gasto:
+    - >= R$ 5.000,00: VIP
+    - >= R$ 1.000,00 e < R$ 5.000,00: REGULAR
+    - > R$ 0,00 e < R$ 1.000,00: NOVO
+    - Sem pedidos finalizados: INATIVO
+  - Exibir via DBMS_OUTPUT: nome, e-mail, total gasto (R$) e classificação.
+  - Usar cursor explícito para percorrer clientes e, internamente, outro cursor explícito para percorrer pedidos.
+
+Exercício 10 — Procedure integradora: processar uma compra completa
+- Assinatura: cp3_pr_processar_compra(p_cliente_id IN NUMBER, p_produto_id IN NUMBER, p_qtd IN NUMBER, p_endereco_id IN NUMBER)
+- Orquestra uma transação única com COMMIT no final ou ROLLBACK total em caso de qualquer erro:
+  1. Validações iniciais (lançar exceção específica se falhar): cliente existe e ativo; produto existe e ativo; endereço existe e pertence ao cliente; quantidade > 0.
+  2. Cria registro do pedido (status 'PENDENTE', data atual, total e frete iguais a zero).
+  3. Cria o item do pedido congelando o preço do produto.
+  4. Dá baixa no estoque chamando cp3_pr_movimentar_estoque.
+  5. Finaliza o pedido chamando cp3_pr_finalizar_pedido.
+  6. Exibe resumo via DBMS_OUTPUT: número do pedido, valor total, valor do frete e total a pagar (total + frete).

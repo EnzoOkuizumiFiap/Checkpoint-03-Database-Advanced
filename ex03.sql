@@ -1,10 +1,21 @@
--- =============================================================
--- Arquivo  : ex03.sql
--- Exercício: 3 — Procedure: pedidos de um período
--- Autor(es): Grupo __________________________
--- RMs: _56348________________________________
--- Data: _17_/_05_/2026
--- =============================================================
+/*
+========================================================
+EXERCÍCIO 3 — Procedure: pedidos de um período
+
+Autor(es): Gustavo Okada
+RM: 563428
+Data: 17/05/2026
+
+Descrição:
+Gera um relatório dos pedidos realizados em um intervalo
+de datas específico, utilizando um cursor explícito.
+Valida se as datas informadas formam um período válido.
+
+Parâmetros:
+- p_data_ini (IN DATE): Data inicial do período
+- p_data_fim (IN DATE): Data final do período
+========================================================
+*/
 
 CREATE OR REPLACE PROCEDURE cp3_pr_listar_pedidos_periodo (
     p_data_ini IN DATE,

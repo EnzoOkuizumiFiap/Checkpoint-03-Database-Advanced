@@ -1,9 +1,10 @@
 /*
 ========================================================
 TESTE DO EXERCÍCIO 2 — Procedure: relatório de produtos por categoria
-Autor(es): Grupo __________________________
-RMs: ______________________________________
-Data: ____/____/2026
+
+Autor(es): Lucas Barros
+RM: 566422
+Data: 17/05/2026
 
 Descrição:
 Dois testes da procedure cp3_pr_listar_produtos_categoria:

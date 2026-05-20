@@ -1,3 +1,15 @@
+/*
+========================================================
+TESTE DO EXERCÍCIO 6 — Function: cálculo do frete
+
+Autor(es): Luna de Carvalho Guimarães
+RM: 562290
+Data: 18/05/2026
+
+Descrição: Cenários de testes (sucesso e erro) para a função que calcula o valor do frete de um pedido.
+========================================================
+*/
+
 SET SERVEROUTPUT ON;
 
 DECLARE

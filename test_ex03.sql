@@ -1,10 +1,15 @@
--- =============================================================
--- Arquivo  : test_ex03.sql
--- Testa    : cp3_pr_listar_pedidos_periodo (Exercício 3)
--- Autor(es): Grupo __________________________
--- RMs: _56348________________________________
--- Data: _17_/_05_/2026
--- =============================================================
+/*
+========================================================
+TESTE DO EXERCÍCIO 3 — Procedure: pedidos de um período
+
+Autor(es): Gustavo Okada
+RM: 563428
+Data: 17/05/2026
+
+Descrição: Cenários de testes (sucesso e erro) para a procedure de listagem de pedidos por período.
+========================================================
+*/
+
 
 SET SERVEROUTPUT ON SIZE UNLIMITED;
 
