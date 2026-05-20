@@ -32,7 +32,7 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20001, 'Erro: O pedido ' || p_pedido_id || ' não existe na tabela.');
     END IF;
 
-    SELECT SUM((quantidade * preco_unitario) - desconto)
+    SELECT SUM((quantidade * preco_unitario) - NVL(desconto, 0))
       INTO v_total_pedido
       FROM cp3_pedido_item
      WHERE pedido_id = p_pedido_id;

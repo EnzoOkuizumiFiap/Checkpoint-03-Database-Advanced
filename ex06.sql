@@ -55,14 +55,13 @@ BEGIN
     END;
 
     SELECT
-        SUM(i.quantidade * prod.peso_kg)
+        SUM(i.quantidade * NVL(prod.peso_kg, 0))
     INTO v_peso_total
     FROM
-        cp3_pedido_item   i,
-        cp3_produto       prod
+        cp3_pedido_item   i
+        INNER JOIN cp3_produto prod ON i.produto_id = prod.produto_id
     WHERE
-        i.produto_id = prod.produto_id
-        AND i.pedido_id = p_pedido_id;
+        i.pedido_id = p_pedido_id;
 
     IF v_peso_total IS NULL THEN
         v_peso_total := 0;
