@@ -62,7 +62,6 @@ BEGIN
 
     insert into cp3_movimento_estoque(movimento_id, produto_id, tipo, quantidade, data_movimento, observacao) values (cp3_seq_movimento.NEXTVAL, p_produto_id, p_tipo, p_qtd, sysdate, p_observacao);
     
-    -- COMMIT exigido pelo enunciado do Exercício 7
     commit;
 
     EXCEPTION WHEN OTHERS THEN 

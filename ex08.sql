@@ -61,7 +61,6 @@ BEGIN
         valor_frete = v_valor_frete
     where pedido_id = p_pedido_id;
     
-    -- COMMIT exigido pelo enunciado do Exercício 8
     commit;
 
     EXCEPTION WHEN OTHERS THEN
